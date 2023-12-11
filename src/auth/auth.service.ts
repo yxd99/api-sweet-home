@@ -25,7 +25,7 @@ export class AuthService {
     } else {
       await this.usersService.updateCode(email);
     }
-    const { code } = await this.usersService.findByEmail(email);
+    const { code } = await this.usersService.getCodeAndExpiring(email);
     await this.mailService.sendCode(email, code);
 
     return {
@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   async validateCode(login: LoginDto): Promise<object> {
-    const user = await this.usersService.findByEmail(login.email);
+    const user = await this.usersService.getCodeAndExpiring(login.email);
     if (user === null) throw new BadRequestException('Email dont exist');
     const now = new Date();
     const dateExpireCode = new Date(parseInt(user.code_expire_in.toString()));

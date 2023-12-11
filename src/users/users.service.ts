@@ -40,4 +40,12 @@ export class UsersService {
       msg: 'Code updated',
     };
   }
+
+  async getCodeAndExpiring(email: string) {
+    return await this.userRepository
+      .createQueryBuilder('users')
+      .addSelect(['users.code', 'users.code_expire_in'])
+      .where('users.email = :email', { email })
+      .getOne();
+  }
 }

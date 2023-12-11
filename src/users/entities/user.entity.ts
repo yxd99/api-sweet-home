@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { HouseholdMember } from 'src/household_members/entities/household_member.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -23,12 +24,17 @@ export class User {
   @Column({
     type: 'text',
     nullable: false,
+    select: false,
   })
   code: string;
 
   @Column({
     type: 'bigint',
     nullable: false,
+    select: false,
   })
   code_expire_in: number;
+
+  @OneToMany(() => HouseholdMember, (householdMember) => householdMember.user)
+  householdMembers: HouseholdMember[];
 }

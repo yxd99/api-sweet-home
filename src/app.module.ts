@@ -6,6 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { MailModule } from './mail/mail.module';
+import { HomesModule } from './homes/homes.module';
+import { HouseholdMembersModule } from './household_members/household_members.module';
+import { HouseholdMember } from './household_members/entities/household_member.entity';
+import { Home } from './homes/entities/home.entity';
 
 @Module({
   imports: [
@@ -19,12 +23,14 @@ import { MailModule } from './mail/mail.module';
       database: process.env.DB_NAME,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      entities: [User],
+      entities: [User, Home, HouseholdMember],
       synchronize: true,
     }),
     AuthModule,
     UsersModule,
     MailModule,
+    HomesModule,
+    HouseholdMembersModule,
   ],
   controllers: [],
   providers: [],
