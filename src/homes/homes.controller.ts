@@ -36,8 +36,11 @@ export class HomesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.homesService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() request) {
+    const {
+      user: { email },
+    } = request;
+    return this.homesService.findOne(+id, email);
   }
 
   @Patch(':id')

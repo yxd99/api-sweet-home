@@ -1,4 +1,9 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
 import { Home } from './entities/home.entity';
@@ -37,7 +42,7 @@ export class HomesService {
       where: {
         householdMembers: {
           user: {
-            email: email,
+            email,
           },
         },
       },
@@ -46,8 +51,20 @@ export class HomesService {
     return homes;
   }
 
-  async findOne(id: number): Promise<Home> {
-    return await this.homeRepository.findOneBy({ id });
+  async findOne(id: number, email: string): Promise<Home> {
+    const home = await this.homeRepository.findOne({
+      relations: ['householdMembers', 'householdMembers.user'],
+      where: {
+        id,
+        householdMembers: {
+          user: {
+            email,
+          },
+        },
+      },
+    });
+    if (home != null) return home;
+    throw new NotFoundException('Home not found');
   }
 
   update(id: number, updateHomeDto: UpdateHomeDto) {

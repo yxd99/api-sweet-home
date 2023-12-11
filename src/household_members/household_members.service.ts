@@ -23,6 +23,7 @@ export class HouseholdMembersService {
     );
     const home = await this.homeService.findOne(
       createHouseholdMemberDto.home_id,
+      user.email,
     );
     const newMember = await this.householdMemberRepository.create({
       home,
