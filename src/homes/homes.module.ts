@@ -5,6 +5,7 @@ import { HouseholdMembersModule } from 'src/household_members/household_members.
 import { UsersModule } from 'src/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Home } from './entities/home.entity';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   controllers: [HomesController],
@@ -14,6 +15,7 @@ import { Home } from './entities/home.entity';
     TypeOrmModule.forFeature([Home]),
     forwardRef(() => HouseholdMembersModule),
     UsersModule,
+    MailModule,
   ],
 })
 export class HomesModule {}

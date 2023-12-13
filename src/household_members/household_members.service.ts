@@ -21,9 +21,9 @@ export class HouseholdMembersService {
     const user = await this.userService.findByEmail(
       createHouseholdMemberDto.user_invited,
     );
+
     const home = await this.homeService.findOne(
       createHouseholdMemberDto.home_id,
-      user.email,
     );
     const newMember = await this.householdMemberRepository.create({
       home,
@@ -39,8 +39,23 @@ export class HouseholdMembersService {
     return `This action returns all householdMembers`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} householdMember`;
+  }
+
+  async verifyIfMemberOfTheHousehold(home_id: number, userEmail: string) {
+    const verification = await this.householdMemberRepository.exist({
+      relations: ['home', 'user'],
+      where: {
+        home: {
+          id: home_id,
+        },
+        user: {
+          email: userEmail,
+        },
+      },
+    });
+    return verification;
   }
 
   update(id: number, updateHouseholdMemberDto: UpdateHouseholdMemberDto) {

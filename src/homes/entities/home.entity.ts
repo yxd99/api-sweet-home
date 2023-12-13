@@ -1,5 +1,11 @@
 import { HouseholdMember } from 'src/household_members/entities/household_member.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 
 @Entity('homes')
 export class Home {
@@ -15,4 +21,9 @@ export class Home {
 
   @OneToMany(() => HouseholdMember, (householdMember) => householdMember.home)
   householdMembers: HouseholdMember[];
+
+  @DeleteDateColumn({
+    select: false,
+  })
+  delete_date: string;
 }
