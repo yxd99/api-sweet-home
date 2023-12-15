@@ -11,8 +11,6 @@ import { Home } from './entities/home.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HouseholdMembersService } from 'src/household_members/household_members.service';
-import { MailService } from 'src/mail/mail.service';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class HomesService {
@@ -21,8 +19,6 @@ export class HomesService {
     private readonly homeRepository: Repository<Home>,
     @Inject(forwardRef(() => HouseholdMembersService))
     private readonly householdMembersService: HouseholdMembersService,
-    private readonly userService: UsersService,
-    private readonly mailService: MailService,
   ) {}
 
   async create(
@@ -67,50 +63,25 @@ export class HomesService {
   }
 
   async update(home_id: number, updateHomeDto: UpdateHomeDto, email: string) {
-    await this.householdMembersService.verifyIfMemberOfTheHousehold(
-      home_id,
-      email,
-    );
-    const home = await this.findOne(home_id);
+    if (Object.keys(updateHomeDto).length === 0)
+      throw new BadRequestException('The data to update isnt null');
+    const home = await this.getHouseInfo(home_id, email);
     await this.homeRepository.update(home_id, updateHomeDto);
-    return `Home ${home.name} has been updated to ${updateHomeDto.name}`;
+    return {
+      msg: `Home ${home.name} has been updated to ${updateHomeDto.name}`,
+    };
   }
 
-  async remove(home_id: number, email: string) {
+  async remove(homeId: number, email: string) {
+    if (isNaN(homeId)) throw new BadRequestException('id isnt number');
     await this.householdMembersService.verifyIfMemberOfTheHousehold(
-      home_id,
+      homeId,
       email,
     );
-    const home = await this.findOne(home_id);
-    await this.homeRepository.softDelete(home);
-    return `${home.name} has been removed successfully`;
-  }
+    const home = await this.findOne(homeId);
 
-  async addMemberToHome(
-    home_id: number,
-    userEmail: string,
-    userEmailInvited: string,
-  ) {
-    if (
-      await this.householdMembersService.verifyIfMemberOfTheHousehold(
-        home_id,
-        userEmailInvited,
-      )
-    )
-      throw new BadRequestException(`User ${userEmailInvited} is a household`);
-    const home = await this.findOne(home_id);
-
-    const user = await this.userService.findByEmail(userEmailInvited);
-    if (user === null)
-      await this.userService.create({ email: userEmailInvited });
-    await this.householdMembersService.create({
-      home_id,
-      user_invited: userEmailInvited,
-    });
-    await this.mailService.inviteUser(userEmailInvited, userEmail, home.name);
-    return {
-      msg: `user ${userEmailInvited} has been invited to ${home.name}`,
-    };
+    await this.homeRepository.softRemove(home);
+    return { msg: `${home.name} has been removed successfully` };
   }
 
   async getHouseInfo(id: number, email: string) {

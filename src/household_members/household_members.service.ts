@@ -1,11 +1,16 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateHouseholdMemberDto } from './dto/create-household_member.dto';
-import { UpdateHouseholdMemberDto } from './dto/update-household_member.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HouseholdMember } from './entities/household_member.entity';
 import { Repository } from 'typeorm';
 import { HomesService } from 'src/homes/homes.service';
 import { UsersService } from 'src/users/users.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class HouseholdMembersService {
@@ -15,6 +20,7 @@ export class HouseholdMembersService {
     @Inject(forwardRef(() => HomesService))
     private readonly homeService: HomesService,
     private readonly userService: UsersService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createHouseholdMemberDto: CreateHouseholdMemberDto) {
@@ -35,20 +41,34 @@ export class HouseholdMembersService {
     };
   }
 
-  findAll() {
-    return `This action returns all householdMembers`;
+  async addMemberToHome(
+    homeId: number,
+    userEmail: string,
+    userEmailInvited: string,
+  ) {
+    if (await this.verifyIfMemberOfTheHousehold(homeId, userEmailInvited))
+      throw new BadRequestException(`User ${userEmailInvited} is a household`);
+    const home = await this.homeService.findOne(homeId);
+
+    const user = await this.userService.findByEmail(userEmailInvited);
+    if (user === null)
+      await this.userService.create({ email: userEmailInvited });
+    await this.create({
+      home_id: homeId,
+      user_invited: userEmailInvited,
+    });
+    await this.mailService.inviteUser(userEmailInvited, userEmail, home.name);
+    return {
+      msg: `user ${userEmailInvited} has been invited to ${home.name}`,
+    };
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} householdMember`;
-  }
-
-  async verifyIfMemberOfTheHousehold(home_id: number, userEmail: string) {
+  async verifyIfMemberOfTheHousehold(homeId: number, userEmail: string) {
     const verification = await this.householdMemberRepository.exist({
       relations: ['home', 'user'],
       where: {
         home: {
-          id: home_id,
+          id: homeId,
         },
         user: {
           email: userEmail,
@@ -58,11 +78,28 @@ export class HouseholdMembersService {
     return verification;
   }
 
-  update(id: number, updateHouseholdMemberDto: UpdateHouseholdMemberDto) {
-    return `This action updates a #${id}, ${updateHouseholdMemberDto.home_id} householdMember`;
+  async remove(userEmail: string, homeId: number) {
+    if (!(await this.verifyIfMemberOfTheHousehold(homeId, userEmail)))
+      throw new BadRequestException('The user isnt a member');
+    const household = await this.householdMemberRepository.findOne({
+      relations: ['user', 'home'],
+      where: {
+        home: {
+          id: homeId,
+        },
+        user: {
+          email: userEmail,
+        },
+      },
+    });
+    await this.householdMemberRepository.softRemove(household);
+    return {
+      msg: `${household.user.email} has been removed from ${household.home.name}`,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} householdMember`;
+  async deleteMember(emailHost: string, emailGuest: string, homeId: number) {
+    await this.homeService.getHouseInfo(homeId, emailHost);
+    return await this.remove(emailGuest, homeId);
   }
 }

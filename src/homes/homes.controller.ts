@@ -11,7 +11,6 @@ import {
 import { HomesService } from './homes.service';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
-import { CreateHouseholdMemberDto } from 'src/household_members/dto/create-household_member.dto';
 
 @Controller('homes')
 export class HomesController {
@@ -63,21 +62,5 @@ export class HomesController {
       user: { email },
     } = request;
     return await this.homesService.remove(+id, email);
-  }
-
-  @Post('invite-user')
-  async addMemberToHome(
-    @Body() inviteUser: CreateHouseholdMemberDto,
-    @Req() request,
-  ) {
-    const {
-      user: { email },
-    } = request;
-
-    return await this.homesService.addMemberToHome(
-      inviteUser.home_id,
-      email,
-      inviteUser.user_invited,
-    );
   }
 }

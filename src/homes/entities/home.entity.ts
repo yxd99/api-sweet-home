@@ -19,7 +19,9 @@ export class Home {
   })
   name: string;
 
-  @OneToMany(() => HouseholdMember, (householdMember) => householdMember.home)
+  @OneToMany(() => HouseholdMember, (householdMember) => householdMember.home, {
+    cascade: true,
+  })
   householdMembers: HouseholdMember[];
 
   @DeleteDateColumn({
