@@ -1,4 +1,5 @@
 import { HouseholdMember } from 'src/household_members/entities/household_member.entity';
+import { PersonalMarket } from 'src/personal_markets/entities/personal_market.entity';
 import {
   Column,
   Entity,
@@ -14,7 +15,7 @@ export class Home {
 
   @Column({
     type: 'varchar',
-    length: 10,
+    length: 60,
     nullable: false,
   })
   name: string;
@@ -22,10 +23,13 @@ export class Home {
   @OneToMany(() => HouseholdMember, (householdMember) => householdMember.home, {
     cascade: true,
   })
-  householdMembers: HouseholdMember[];
+  household_members: HouseholdMember[];
 
   @DeleteDateColumn({
     select: false,
   })
   delete_date: string;
+
+  @OneToMany(() => PersonalMarket, (personalMarker) => personalMarker.home)
+  personal_markets: PersonalMarket[];
 }

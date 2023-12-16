@@ -37,9 +37,9 @@ export class HomesService {
 
   async findAll(email: string): Promise<object> {
     const homes = await this.homeRepository.find({
-      relations: ['householdMembers', 'householdMembers.user'],
+      relations: ['household_members', 'household_members.user'],
       where: {
-        householdMembers: {
+        household_members: {
           user: {
             email,
           },
@@ -53,7 +53,7 @@ export class HomesService {
   async findOne(id: number): Promise<Home> {
     if (isNaN(id)) throw new BadRequestException('id isnt number');
     const home = await this.homeRepository.findOne({
-      relations: ['householdMembers', 'householdMembers.user'],
+      relations: ['household_members', 'household_members.user'],
       where: {
         id,
       },
@@ -87,10 +87,10 @@ export class HomesService {
   async getHouseInfo(id: number, email: string) {
     if (isNaN(id)) throw new BadRequestException('id isnt number');
     const home = await this.homeRepository.findOne({
-      relations: ['householdMembers', 'householdMembers.user'],
+      relations: ['household_members', 'household_members.user'],
       where: {
         id,
-        householdMembers: {
+        household_members: {
           user: {
             email,
           },

@@ -22,8 +22,6 @@ export class HomesController {
       user: { email },
     } = request;
 
-    console.log(email);
-
     return this.homesService.create(createHomeDto, email);
   }
 
