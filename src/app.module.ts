@@ -10,6 +10,8 @@ import { HomesModule } from './homes/homes.module';
 import { HouseholdMembersModule } from './household_members/household_members.module';
 import { HouseholdMember } from './household_members/entities/household_member.entity';
 import { Home } from './homes/entities/home.entity';
+import { PersonalMarketsModule } from './personal_markets/personal_markets.module';
+import { PersonalMarket } from './personal_markets/entities/personal_market.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { Home } from './homes/entities/home.entity';
       database: process.env.DB_NAME,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      entities: [User, Home, HouseholdMember],
+      entities: [User, Home, HouseholdMember, PersonalMarket],
       synchronize: true,
     }),
     AuthModule,
@@ -31,6 +33,7 @@ import { Home } from './homes/entities/home.entity';
     MailModule,
     HomesModule,
     HouseholdMembersModule,
+    PersonalMarketsModule,
   ],
   controllers: [],
   providers: [],
