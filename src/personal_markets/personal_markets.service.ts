@@ -91,8 +91,10 @@ export class PersonalMarketsService {
     };
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} personalMarket`;
+  async remove(id: number, email: string) {
+    const market = await this.findOne(id, email);
+    await this.personalMarketRepository.remove(market);
+    return { msg: `${market.name} has been delete successfuly` };
   }
 
   async validateHome(personalMarketId: number, userEmail: string) {

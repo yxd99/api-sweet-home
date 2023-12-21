@@ -69,7 +69,10 @@ export class PersonalMarketsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.personalMarketsService.remove(+id);
+  remove(@Param('id') id: string, @Req() request) {
+    const {
+      user: { email },
+    } = request;
+    return this.personalMarketsService.remove(+id, email);
   }
 }
