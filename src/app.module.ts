@@ -12,6 +12,8 @@ import { HouseholdMember } from './household_members/entities/household_member.e
 import { Home } from './homes/entities/home.entity';
 import { PersonalMarketsModule } from './personal_markets/personal_markets.module';
 import { PersonalMarket } from './personal_markets/entities/personal_market.entity';
+import { ProductsModule } from './products/products.module';
+import { Product } from './products/entities/product.entity';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { PersonalMarket } from './personal_markets/entities/personal_market.enti
       database: process.env.DB_NAME,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      entities: [User, Home, HouseholdMember, PersonalMarket],
+      entities: [User, Home, HouseholdMember, PersonalMarket, Product],
       synchronize: true,
     }),
     AuthModule,
@@ -34,6 +36,7 @@ import { PersonalMarket } from './personal_markets/entities/personal_market.enti
     HomesModule,
     HouseholdMembersModule,
     PersonalMarketsModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [],

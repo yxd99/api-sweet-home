@@ -43,27 +43,27 @@ export class HouseholdMembersService {
 
   async addMemberToHome(
     homeId: number,
-    userEmail: string,
-    userEmailInvited: string,
+    email: string,
+    emailInvited: string,
   ) {
-    if (await this.verifyIfMemberOfTheHousehold(homeId, userEmailInvited))
-      throw new BadRequestException(`User ${userEmailInvited} is a household`);
+    if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited))
+      throw new BadRequestException(`User ${emailInvited} is a household`);
     const home = await this.homeService.findOne(homeId);
 
-    const user = await this.userService.findByEmail(userEmailInvited);
+    const user = await this.userService.findByEmail(emailInvited);
     if (user === null)
-      await this.userService.create({ email: userEmailInvited });
+      await this.userService.create({ email: emailInvited });
     await this.create({
       home_id: homeId,
-      user_invited: userEmailInvited,
+      user_invited: emailInvited,
     });
-    await this.mailService.inviteUser(userEmailInvited, userEmail, home.name);
+    await this.mailService.inviteUser(emailInvited, email, home.name);
     return {
-      msg: `user ${userEmailInvited} has been invited to ${home.name}`,
+      msg: `user ${emailInvited} has been invited to ${home.name}`,
     };
   }
 
-  async verifyIfMemberOfTheHousehold(homeId: number, userEmail: string) {
+  async verifyIfMemberOfTheHousehold(homeId: number, email: string) {
     const verification = await this.householdMemberRepository.exist({
       relations: ['home', 'user'],
       where: {
@@ -71,15 +71,15 @@ export class HouseholdMembersService {
           id: homeId,
         },
         user: {
-          email: userEmail,
+          email: email,
         },
       },
     });
     return verification;
   }
 
-  async remove(userEmail: string, homeId: number) {
-    if (!(await this.verifyIfMemberOfTheHousehold(homeId, userEmail)))
+  async remove(email: string, homeId: number) {
+    if (!(await this.verifyIfMemberOfTheHousehold(homeId, email)))
       throw new BadRequestException('The user isnt a member');
     const household = await this.householdMemberRepository.findOne({
       relations: ['user', 'home'],
@@ -88,7 +88,7 @@ export class HouseholdMembersService {
           id: homeId,
         },
         user: {
-          email: userEmail,
+          email: email,
         },
       },
     });
