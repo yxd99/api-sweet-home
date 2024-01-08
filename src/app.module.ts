@@ -14,6 +14,8 @@ import { PersonalMarketsModule } from './personal_markets/personal_markets.modul
 import { PersonalMarket } from './personal_markets/entities/personal_market.entity';
 import { ProductsModule } from './products/products.module';
 import { Product } from './products/entities/product.entity';
+import { SupermarketProductsModule } from './supermarket-products/supermarket-products.module';
+import { SupermarketProduct } from './supermarket-products/entities/supermarket-product.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,14 @@ import { Product } from './products/entities/product.entity';
       database: process.env.DB_NAME,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      entities: [User, Home, HouseholdMember, PersonalMarket, Product],
+      entities: [
+        User,
+        Home,
+        HouseholdMember,
+        PersonalMarket,
+        Product,
+        SupermarketProduct,
+      ],
       synchronize: true,
     }),
     AuthModule,
@@ -37,6 +46,7 @@ import { Product } from './products/entities/product.entity';
     HouseholdMembersModule,
     PersonalMarketsModule,
     ProductsModule,
+    SupermarketProductsModule,
   ],
   controllers: [],
   providers: [],

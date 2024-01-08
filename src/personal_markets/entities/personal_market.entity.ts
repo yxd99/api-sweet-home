@@ -1,9 +1,11 @@
 import { Home } from 'src/homes/entities/home.entity';
+import { SupermarketProduct } from 'src/supermarket-products/entities/supermarket-product.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -23,4 +25,11 @@ export class PersonalMarket {
     name: 'home_id',
   })
   home: Home;
+
+  @OneToMany(
+    () => SupermarketProduct,
+    (supermarketProducts) => supermarketProducts.market,
+    { cascade: true },
+  )
+  products: SupermarketProduct[];
 }
