@@ -7,11 +7,11 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { PersonalMarketsService } from './personal_markets.service';
 import { CreatePersonalMarketDto } from './dto/create-personal_market.dto';
 import { UpdatePersonalMarketDto } from './dto/update-personal_market.dto';
-import { FindAllDto } from './dto/find-all.dto';
 
 @Controller('personal-markets')
 export class PersonalMarketsController {
@@ -34,12 +34,12 @@ export class PersonalMarketsController {
   }
 
   @Get()
-  async findAll(@Body() { home_id }: FindAllDto, @Req() request) {
+  async findAll(@Query('home_id') home_id, @Req() request) {
     const {
       user: { email },
     } = request;
 
-    return await this.personalMarketsService.findAll(+home_id, email);
+    return await this.personalMarketsService.findAll(+home_id || null, email);
   }
 
   @Get(':id')

@@ -32,25 +32,40 @@ export class PersonalMarketsService {
     };
   }
 
-  async findAll(homeId: number, email: string): Promise<PersonalMarket[]> {
-    await this.homeService.getHouseInfo(homeId, email);
-    const personalMarkets = await this.personalMarketRepository.find({
-      relations: [
-        'home',
-        'home.household_members',
-        'home.household_members.user',
-      ],
-      where: {
-        home: {
-          id: homeId,
-          household_members: {
-            user: {
-              email: email,
+  async findAll(home_id: number, email: string): Promise<PersonalMarket[]> {
+    let personalMarkets: PersonalMarket[];
+    if (home_id === null) {
+      personalMarkets = await this.personalMarketRepository.find({
+        relations: ['home', 'home.household_members', 'home.household_members'],
+        where: {
+          home: {
+            household_members: {
+              user: {
+                email: email,
+              },
             },
           },
         },
-      },
-    });
+      });
+    } else {
+      personalMarkets = await this.personalMarketRepository.find({
+        relations: [
+          'home',
+          'home.household_members',
+          'home.household_members.user',
+        ],
+        where: {
+          home: {
+            id: home_id,
+            household_members: {
+              user: {
+                email: email,
+              },
+            },
+          },
+        },
+      });
+    }
     return personalMarkets;
   }
 

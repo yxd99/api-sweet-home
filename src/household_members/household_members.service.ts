@@ -42,19 +42,19 @@ export class HouseholdMembersService {
   }
 
   async addMemberToHome(
-    homeId: number,
+    home_id: number,
     email: string,
     emailInvited: string,
   ) {
-    if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited))
+    if (await this.verifyIfMemberOfTheHousehold(home_id, emailInvited))
       throw new BadRequestException(`User ${emailInvited} is a household`);
-    const home = await this.homeService.findOne(homeId);
+    const home = await this.homeService.findOne(home_id);
 
     const user = await this.userService.findByEmail(emailInvited);
     if (user === null)
       await this.userService.create({ email: emailInvited });
     await this.create({
-      home_id: homeId,
+      home_id: home_id,
       user_invited: emailInvited,
     });
     await this.mailService.inviteUser(emailInvited, email, home.name);
@@ -63,12 +63,12 @@ export class HouseholdMembersService {
     };
   }
 
-  async verifyIfMemberOfTheHousehold(homeId: number, email: string) {
+  async verifyIfMemberOfTheHousehold(home_id: number, email: string) {
     const verification = await this.householdMemberRepository.exist({
       relations: ['home', 'user'],
       where: {
         home: {
-          id: homeId,
+          id: home_id,
         },
         user: {
           email: email,
@@ -78,14 +78,14 @@ export class HouseholdMembersService {
     return verification;
   }
 
-  async remove(email: string, homeId: number) {
-    if (!(await this.verifyIfMemberOfTheHousehold(homeId, email)))
+  async remove(email: string, home_id: number) {
+    if (!(await this.verifyIfMemberOfTheHousehold(home_id, email)))
       throw new BadRequestException('The user isnt a member');
     const household = await this.householdMemberRepository.findOne({
       relations: ['user', 'home'],
       where: {
         home: {
-          id: homeId,
+          id: home_id,
         },
         user: {
           email: email,
@@ -98,8 +98,8 @@ export class HouseholdMembersService {
     };
   }
 
-  async deleteMember(emailHost: string, emailGuest: string, homeId: number) {
-    await this.homeService.getHouseInfo(homeId, emailHost);
-    return await this.remove(emailGuest, homeId);
+  async deleteMember(emailHost: string, emailGuest: string, home_id: number) {
+    await this.homeService.getHouseInfo(home_id, emailHost);
+    return await this.remove(emailGuest, home_id);
   }
 }

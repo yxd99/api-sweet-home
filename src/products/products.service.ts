@@ -66,7 +66,6 @@ export class ProductsService {
         id: id,
       },
     });
-    console.log(product);
     await this.homesService.getHouseInfo(product.home.id, email);
     return product;
   }

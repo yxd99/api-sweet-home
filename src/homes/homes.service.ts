@@ -72,13 +72,13 @@ export class HomesService {
     };
   }
 
-  async remove(homeId: number, email: string) {
-    if (isNaN(homeId)) throw new BadRequestException('id isnt number');
+  async remove(home_id: number, email: string) {
+    if (isNaN(home_id)) throw new BadRequestException('id isnt number');
     await this.householdMembersService.verifyIfMemberOfTheHousehold(
-      homeId,
+      home_id,
       email,
     );
-    const home = await this.findOne(homeId);
+    const home = await this.findOne(home_id);
 
     await this.homeRepository.softRemove(home);
     return { msg: `${home.name} has been removed successfully` };
