@@ -27,27 +27,47 @@ export class ProductsService {
   }
 
   async findAll(home_id: number, email: string) {
-    await this.homesService.getHouseInfo(home_id, email);
-    const products = await this.productRepository.find({
-      relations: [],
-      where: {
-        home: {
-          id: home_id,
+    let products: Product[];
+    if (home_id === null) {
+      products = await this.productRepository.find({
+        relations: ['home', 'home.household_members'],
+        where: {
+          home: {
+            household_members: {
+              user: {
+                email,
+              },
+            },
+          },
         },
-      },
-    });
-
+      });
+    } else {
+      products = await this.productRepository.find({
+        relations: ['home', 'home.household_members'],
+        where: {
+          home: {
+            id: home_id,
+            household_members: {
+              user: {
+                email,
+              },
+            },
+          },
+        },
+      });
+    }
     return products;
   }
 
-  async findOne(home_id: number, email: string, id: number) {
-    await this.homesService.getHouseInfo(home_id, email);
+  async findOne(email: string, id: number) {
     const product = await this.productRepository.findOne({
-      relations: [],
+      relations: ['home'],
       where: {
         id: id,
       },
     });
+    console.log(product);
+    await this.homesService.getHouseInfo(product.home.id, email);
     return product;
   }
 

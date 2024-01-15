@@ -19,9 +19,9 @@ export class AuthService {
 
   async sendCode({ email }: sendOtpCodeDto): Promise<object> {
     const user = await this.usersService.findByEmail(email);
+
     if (user === null) {
-      user.email = email;
-      await this.usersService.create(user);
+      await this.usersService.create({ email });
     } else {
       await this.usersService.updateCode(email);
     }
