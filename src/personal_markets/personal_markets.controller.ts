@@ -22,11 +22,9 @@ export class PersonalMarketsController {
   @Post()
   async create(
     @Body() createPersonalMarketDto: CreatePersonalMarketDto,
-    @Req() request,
+    @Req() { user: { email } },
   ) {
-    const {
-      user: { email },
-    } = request;
+    
     return await this.personalMarketsService.create(
       createPersonalMarketDto,
       email,
@@ -34,19 +32,15 @@ export class PersonalMarketsController {
   }
 
   @Get()
-  async findAll(@Query('home_id') home_id, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  async findAll(@Query('home_id') home_id, @Req() { user: { email } }) {
+    
 
     return await this.personalMarketsService.findAll(+home_id || null, email);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  findOne(@Param('id') id: string, @Req() { user: { email } }) {
+    
 
     return this.personalMarketsService.findOne(+id, email);
   }
@@ -55,11 +49,9 @@ export class PersonalMarketsController {
   update(
     @Param('id') id: string,
     @Body() updatePersonalMarketDto: UpdatePersonalMarketDto,
-    @Req() request,
+    @Req() { user: { email } },
   ) {
-    const {
-      user: { email },
-    } = request;
+    
 
     return this.personalMarketsService.update(
       +id,
@@ -69,10 +61,8 @@ export class PersonalMarketsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  remove(@Param('id') id: string, @Req() { user: { email } }) {
+    
     return this.personalMarketsService.remove(+id, email);
   }
 }

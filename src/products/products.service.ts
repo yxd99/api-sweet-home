@@ -66,6 +66,7 @@ export class ProductsService {
         id: id,
       },
     });
+    if (product === null) throw new NotFoundException('Product not found');
     await this.homesService.getHouseInfo(product.home.id, email);
     return product;
   }

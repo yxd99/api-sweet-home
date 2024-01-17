@@ -12,12 +12,8 @@ export class HouseholdMembersController {
   @Post('invite-user')
   async addMemberToHome(
     @Body() inviteUser: CreateHouseholdMemberDto,
-    @Req() request,
+    @Req() { user: { email } },
   ) {
-    const {
-      user: { email },
-    } = request;
-
     return await this.householdMembersService.addMemberToHome(
       inviteUser.home_id,
       email,
@@ -28,11 +24,8 @@ export class HouseholdMembersController {
   @Delete('delete-member')
   async deleteMember(
     @Body() deleteHouseholdMember: DeleteHouseholdMemberDto,
-    @Req() request,
+    @Req() { user: { email } },
   ) {
-    const {
-      user: { email },
-    } = request;
     return await this.householdMembersService.deleteMember(
       email,
       deleteHouseholdMember.email_guest,

@@ -18,26 +18,20 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  async create(@Body() createProductDto: CreateProductDto, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  async create(@Body() createProductDto: CreateProductDto, @Req() { user: { email } }) {
+    
     return await this.productsService.create(createProductDto, email);
   }
 
   @Get()
-  async findAll(@Query('home_id') home_id, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  async findAll(@Query('home_id') home_id, @Req() { user: { email } }) {
+    
     return await this.productsService.findAll(+home_id || null, email);
   }
 
   @Get(':product_id')
-  findOne(@Param('product_id') product_id: string, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  findOne(@Param('product_id') product_id: string, @Req() { user: { email } }) {
+    
     return this.productsService.findOne(email, +product_id);
   }
 
@@ -45,19 +39,15 @@ export class ProductsController {
   update(
     @Param('product_id') id: string,
     @Body() updateProductDto: UpdateProductDto,
-    @Req() request,
+    @Req() { user: { email } },
   ) {
-    const {
-      user: { email },
-    } = request;
+    
     return this.productsService.update(email, +id, updateProductDto);
   }
 
   @Delete(':product_id')
-  remove(@Param('product_id') id: string, @Req() request) {
-    const {
-      user: { email },
-    } = request;
+  remove(@Param('product_id') id: string, @Req() { user: { email } }) {
+    
     return this.productsService.remove(email, +id);
   }
 }
