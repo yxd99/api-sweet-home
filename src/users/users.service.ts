@@ -42,6 +42,8 @@ export class UsersService {
   }
 
   async getCodeAndExpiring(email: string) {
+    console.log('obteniendo codigo y expiracion');
+
     return await this.userRepository
       .createQueryBuilder('users')
       .addSelect(['users.code', 'users.code_expire_in'])
