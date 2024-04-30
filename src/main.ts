@@ -1,21 +1,18 @@
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
 
-(async function () {
+import { swagger } from '@common/config';
+import { apiInfo } from '@common/constants';
+
+import { AppModule } from './app.module';
+
+const main = async () => {
   const port = process.env.PORT ?? 3000;
-  const prefix = process.env.PREFIX ?? 'api';
+  const prefix = apiInfo.PREFIX;
 
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Api My Home')
-    .setDescription('Api develop for the project my-home')
-    .setVersion('1')
-    .build();
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -25,9 +22,12 @@ import { ValidationPipe } from '@nestjs/common';
     }),
   );
 
-  SwaggerModule.setup(prefix, app, swaggerDocument);
+  swagger.setup(app);
+
   app.setGlobalPrefix(prefix);
   await app.listen(port, async () => {
-    console.log(`App in: ${await app.getUrl()}`);
+    Logger.log(`App in: ${await app.getUrl()}`);
   });
-})();
+};
+
+main();
