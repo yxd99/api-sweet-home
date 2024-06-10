@@ -19,7 +19,7 @@ export class MailService {
   async inviteUser(guest, host, homeName) {
     await this.mailerService.sendMail({
       to: guest,
-      subject: `[NO-REPLY] Sweet Home App: Someone invited you to belong to their home`,
+      subject: `[NO-REPLY] Sweet Home App for ${guest}: Someone invited you to belong to their home`,
       template: './invitation',
       context: {
         guest,

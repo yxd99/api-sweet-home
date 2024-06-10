@@ -21,27 +21,27 @@ export class HomesController {
   @Post()
   async create(@Body() createHomeDto: CreateHomeDto, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
-    return this.homesService.create(createHomeDto, email);
+    return this.homesService.create(createHomeDto, userId);
   }
 
   @Get()
   findAll(@Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.homesService.findAll(email);
+    return this.homesService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number, @Req() request) {
+  findOne(@Param('id', ParseIntPipe) homeId: number, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
-    return this.homesService.getHouseInfo(id, email);
+    return this.homesService.getHouseInfo(homeId, userId);
   }
 
   @Patch(':id')
@@ -51,16 +51,16 @@ export class HomesController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.homesService.update(id, updateHomeDto, email);
+    return this.homesService.update(id, updateHomeDto, userId);
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.homesService.remove(id, email);
+    return this.homesService.remove(id, userId);
   }
 }

@@ -18,11 +18,11 @@ export class PersonalMarketsService {
 
   async create(
     createPersonalMarketDto: CreatePersonalMarketDto,
-    email: string,
+    userId: number,
   ) {
     const { name, homeId } = createPersonalMarketDto;
 
-    const home = await this.homeService.getHouseInfo(homeId, email);
+    const home = await this.homeService.getHouseInfo(homeId, userId);
 
     await this.personalMarketRepository.save({
       home,
@@ -34,20 +34,20 @@ export class PersonalMarketsService {
     };
   }
 
-  async findAll(homeId: number, email: string): Promise<PersonalMarket[]> {
-    await this.homeService.getHouseInfo(homeId, email);
+  async findAll(homeId: number, userId: number): Promise<PersonalMarket[]> {
+    await this.homeService.getHouseInfo(homeId, userId);
     return this.personalMarketRepository.find({
       relations: [
         'home',
-        'home.household_members',
-        'home.household_members.user',
+        'home.householdMembers',
+        'home.householdMembers.user',
       ],
       where: {
         home: {
           id: homeId,
-          household_members: {
+          householdMembers: {
             user: {
-              email,
+              id: userId,
             },
           },
         },
@@ -57,9 +57,9 @@ export class PersonalMarketsService {
 
   async findOne(
     personalMarketId: number,
-    email: string,
+    userId: number,
   ): Promise<PersonalMarket> {
-    await this.validateHome(personalMarketId, email);
+    await this.validateHome(personalMarketId, userId);
     return this.personalMarketRepository.findOne({
       relations: ['home'],
       where: { id: personalMarketId },
@@ -69,17 +69,17 @@ export class PersonalMarketsService {
   async update(
     personalMarketId: number,
     updatePersonalMarketDto: UpdatePersonalMarketDto,
-    email,
+    userId: number,
   ) {
     if (Object.keys(updatePersonalMarketDto).length > 0) {
-      await this.validateHome(personalMarketId, email);
-      const personalMarket = await this.findOne(personalMarketId, email);
+      await this.validateHome(personalMarketId, userId);
+      const personalMarket = await this.findOne(personalMarketId, userId);
       if (Object.keys(updatePersonalMarketDto).includes('homeId')) {
         const { homeId } = updatePersonalMarketDto;
-        await this.validateHome(homeId, email);
+        await this.validateHome(homeId, userId);
         personalMarket.home = await this.homeService.getHouseInfo(
           homeId,
-          email,
+          userId,
         );
       }
 
@@ -90,27 +90,23 @@ export class PersonalMarketsService {
     };
   }
 
-  async remove(id: number, email: string) {
-    const market = await this.findOne(id, email);
+  async remove(id: number, userId: number) {
+    const market = await this.findOne(id, userId);
     await this.personalMarketRepository.remove(market);
     return { msg: `${market.name} has been delete successfuly` };
   }
 
-  async validateHome(personalMarketId: number, email: string) {
-    try {
-      const homeId =
-        (
-          await this.personalMarketRepository.findOne({
-            relations: ['home'],
-            where: {
-              id: personalMarketId,
-            },
-          })
-        )?.home.id || 0;
-
-      await this.homeService.getHouseInfo(homeId, email);
-    } catch (e) {
+  async validateHome(personalMarketId: number, userId: number) {
+    const home = await this.personalMarketRepository.findOne({
+      relations: ['home'],
+      where: {
+        id: personalMarketId,
+      },
+    });
+    if (!home) {
       throw new NotFoundException('Personal market not found for the home');
     }
+
+    await this.homeService.getHouseInfo(home.id, userId);
   }
 }

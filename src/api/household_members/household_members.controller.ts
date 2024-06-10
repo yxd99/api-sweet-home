@@ -16,13 +16,13 @@ export class HouseholdMembersController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
     return this.householdMembersService.addMemberToHome(
       inviteUser.homeId,
-      email,
-      inviteUser.user_invited,
+      userId,
+      inviteUser.userInvited,
     );
   }
 
@@ -32,11 +32,11 @@ export class HouseholdMembersController {
     @Body() deleteHouseholdMember: DeleteHouseholdMemberDto,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
     return this.householdMembersService.deleteMember(
-      email,
-      deleteHouseholdMember.email_guest,
+      userId,
+      deleteHouseholdMember.emailGuest,
       deleteHouseholdMember.homeId,
     );
   }

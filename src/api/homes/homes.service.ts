@@ -30,7 +30,7 @@ export class HomesService {
     const homeId = (await this.homeRepository.save(createHomeDto)).id;
     await this.householdMembersService.create({
       homeId,
-      user_invited: emailUser,
+      userInvited: emailUser,
     });
     return {
       msg: `House ${createHomeDto.name} has been create`,
@@ -39,9 +39,8 @@ export class HomesService {
 
   async findAll(email: string): Promise<object> {
     return this.homeRepository.find({
-      relations: ['household_members'],
       where: {
-        household_members: {
+        householdMembers: {
           user: {
             email,
           },
@@ -52,19 +51,22 @@ export class HomesService {
 
   async findOne(id: number): Promise<Home> {
     const home = await this.homeRepository.findOne({
-      relations: ['household_members', 'household_members.user'],
+      relations: ['householdMembers', `householdMembers.user`],
       where: {
         id,
       },
     });
-    if (home === null) throw new NotFoundException('Home not found');
+    if (home === null) {
+      throw new NotFoundException('Home not found');
+    }
     return home;
   }
 
-  async update(homeId: number, updateHomeDto: UpdateHomeDto, email: string) {
-    if (Object.keys(updateHomeDto).length === 0)
+  async update(homeId: number, updateHomeDto: UpdateHomeDto, userId: number) {
+    if (Object.keys(updateHomeDto).length === 0) {
       throw new BadRequestException('The data to update isnt null');
-    const home = await this.getHouseInfo(homeId, email);
+    }
+    const home = await this.getHouseInfo(homeId, userId);
     await this.homeRepository.update(homeId, updateHomeDto);
     return {
       msg: `Home ${home.name} has been updated to ${updateHomeDto.name}`,
@@ -82,19 +84,22 @@ export class HomesService {
     return { msg: `${home.name} has been removed successfully` };
   }
 
-  async getHouseInfo(id: number, email: string) {
+  async getHouseInfo(homeId: number, userId: number) {
     const home = await this.homeRepository.findOne({
-      relations: ['household_members', 'household_members.user'],
+      relations: ['householdMembers', 'householdMembers.user'],
       where: {
-        id,
-        household_members: {
+        id: homeId,
+        householdMembers: {
           user: {
-            email,
+            id: userId,
           },
         },
       },
     });
-    if (home === null) throw new NotFoundException('Home not found');
+
+    if (home === null) {
+      throw new NotFoundException('Home not found');
+    }
     return home;
   }
 }

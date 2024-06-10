@@ -16,18 +16,19 @@ export class HouseholdMember {
 
   @ManyToOne(() => Home, (home) => home.id)
   @JoinColumn({
-    name: 'homeId',
+    name: 'home_id',
   })
   home: Home;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({
-    name: 'userId',
+    name: 'user_id',
   })
   user: User;
 
   @DeleteDateColumn({
     select: false,
+    name: 'delete_date',
   })
-  delete_date: string;
+  deleteDate: string;
 }

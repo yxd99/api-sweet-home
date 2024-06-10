@@ -27,7 +27,7 @@ export class HouseholdMembersService {
 
   async create(createHouseholdMemberDto: CreateHouseholdMemberDto) {
     const user = await this.userService.findByEmail(
-      createHouseholdMemberDto.user_invited,
+      createHouseholdMemberDto.userInvited,
     );
 
     const home = await this.homeService.findOne(
@@ -43,18 +43,22 @@ export class HouseholdMembersService {
     };
   }
 
-  async addMemberToHome(homeId: number, email: string, emailInvited: string) {
-    if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited))
-      throw new BadRequestException(`User ${emailInvited} is a household`);
+  async addMemberToHome(homeId: number, userId: number, emailInvited: string) {
+    if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited)) {
+      throw new BadRequestException(`User ${emailInvited} is a member`);
+    }
     const home = await this.homeService.findOne(homeId);
 
     const user = await this.userService.findByEmail(emailInvited);
-    if (user === null) await this.userService.create({ email: emailInvited });
+    const host = await this.userService.findById(userId);
+    if (user === null) {
+      await this.userService.create({ email: emailInvited });
+    }
     await this.create({
       homeId,
-      user_invited: emailInvited,
+      userInvited: emailInvited,
     });
-    await this.mailService.inviteUser(emailInvited, email, home.name);
+    await this.mailService.inviteUser(emailInvited, host.name, home.name);
     return {
       msg: `user ${emailInvited} has been invited to ${home.name}`,
     };
@@ -75,8 +79,9 @@ export class HouseholdMembersService {
   }
 
   async remove(email: string, homeId: number) {
-    if (!(await this.verifyIfMemberOfTheHousehold(homeId, email)))
+    if (!(await this.verifyIfMemberOfTheHousehold(homeId, email))) {
       throw new BadRequestException('The user isnt a member');
+    }
     const household = await this.householdMemberRepository.findOne({
       relations: ['user', 'home'],
       where: {
@@ -94,8 +99,8 @@ export class HouseholdMembersService {
     };
   }
 
-  async deleteMember(emailHost: string, emailGuest: string, homeId: number) {
-    await this.homeService.getHouseInfo(homeId, emailHost);
+  async deleteMember(userId: number, emailGuest: string, homeId: number) {
+    await this.homeService.getHouseInfo(homeId, userId);
     return this.remove(emailGuest, homeId);
   }
 }
