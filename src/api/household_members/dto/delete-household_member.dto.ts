@@ -2,7 +2,7 @@ import { IsEmail, IsNumber } from 'class-validator';
 
 export class DeleteHouseholdMemberDto {
   @IsEmail()
-  email_guest: string;
+  emailGuest: string;
 
   @IsNumber()
   homeId: number;

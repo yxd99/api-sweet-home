@@ -15,7 +15,7 @@ export class Product {
 
   @ManyToOne(() => Home, (home) => home.id)
   @JoinColumn({
-    name: 'homeId',
+    name: 'home_id',
   })
   home: Home;
 

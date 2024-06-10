@@ -24,13 +24,14 @@ export class Home {
   @OneToMany(() => HouseholdMember, (householdMember) => householdMember.home, {
     cascade: true,
   })
-  household_members: HouseholdMember[];
+  householdMembers: HouseholdMember[];
 
   @DeleteDateColumn({
     select: false,
+    name: 'delete_date',
   })
-  delete_date: string;
+  deleteDate: string;
 
   @OneToMany(() => PersonalMarket, (personalMarker) => personalMarker.home)
-  personal_markets: PersonalMarket[];
+  personalMarkets: PersonalMarket[];
 }

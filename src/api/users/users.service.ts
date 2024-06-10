@@ -14,8 +14,14 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findByEmail(email: string): Promise<User | null> {
-    return (await this.userRepository.findOneBy({ email })) || null;
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOneBy({ email });
+  }
+
+  async findById(id: number) {
+    return this.userRepository.findOneBy({
+      id,
+    });
   }
 
   async create(user: CreateUserDto): Promise<object> {
@@ -24,7 +30,7 @@ export class UsersService {
       await this.userRepository.save({
         ...user,
         code: code.code,
-        code_expire_in: code.expire,
+        codeExpireIn: code.expire,
       });
       return { msg: `user ${user.email} created successfully` };
     } catch (ex) {
@@ -36,7 +42,7 @@ export class UsersService {
     const code = generateRandomCode();
     await this.userRepository.update(
       { email },
-      { code: code.code, code_expire_in: code.expire },
+      { code: code.code, codeExpireIn: code.expire },
     );
     return {
       msg: 'Code updated',
@@ -46,7 +52,7 @@ export class UsersService {
   async getCodeAndExpiring(email: string) {
     return this.userRepository
       .createQueryBuilder('users')
-      .addSelect(['users.code', 'users.code_expire_in'])
+      .addSelect(['users.code', 'users.codeExpireIn'])
       .where('users.email = :email', { email })
       .getOne();
   }

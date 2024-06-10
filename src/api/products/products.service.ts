@@ -16,9 +16,9 @@ export class ProductsService {
     private readonly homesService: HomesService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, email: string) {
+  async create(createProductDto: CreateProductDto, userId: number) {
     const { homeId, ...rest } = createProductDto;
-    const home = await this.homesService.getHouseInfo(homeId, email);
+    const home = await this.homesService.getHouseInfo(homeId, userId);
     const newProduct = await this.productRepository.save({
       home,
       ...rest,
@@ -28,8 +28,8 @@ export class ProductsService {
     };
   }
 
-  async findAll(homeId: number, email: string) {
-    await this.homesService.getHouseInfo(homeId, email);
+  async findAll(homeId: number, userId: number) {
+    await this.homesService.getHouseInfo(homeId, userId);
     return this.productRepository.find({
       relations: [],
       where: {
@@ -40,8 +40,8 @@ export class ProductsService {
     });
   }
 
-  async findOne(homeId: number, email: string, id: number) {
-    await this.homesService.getHouseInfo(homeId, email);
+  async findOne(homeId: number, userId: number, id: number) {
+    await this.homesService.getHouseInfo(homeId, userId);
     return this.productRepository.findOne({
       relations: [],
       where: {
@@ -50,20 +50,21 @@ export class ProductsService {
     });
   }
 
-  async update(email: string, id: number, updateProductDto: UpdateProductDto) {
+  async update(userId: number, id: number, updateProductDto: UpdateProductDto) {
     const product = await this.productRepository.findOne({
       relations: ['home'],
       where: {
         id,
       },
     });
-    if (product === null)
+    if (product === null) {
       throw new NotFoundException(`Id product ${id} not exist`);
-    await this.homesService.getHouseInfo(product.home.id, email);
+    }
+    await this.homesService.getHouseInfo(product.home.id, userId);
     if (Object.keys(updateProductDto).includes('homeId')) {
       const { homeId } = updateProductDto;
-      await this.homesService.getHouseInfo(homeId, email);
-      product.home = await this.homesService.getHouseInfo(homeId, email);
+      await this.homesService.getHouseInfo(homeId, userId);
+      product.home = await this.homesService.getHouseInfo(homeId, userId);
     }
     await this.productRepository.save(product);
 
@@ -72,8 +73,8 @@ export class ProductsService {
     };
   }
 
-  async remove(email: string, id: number) {
-    await this.homesService.getHouseInfo(id, email);
+  async remove(userId: number, id: number) {
+    await this.homesService.getHouseInfo(id, userId);
     await this.productRepository.delete(id);
     return { msg: `Product ${id} has been delete successfully` };
   }

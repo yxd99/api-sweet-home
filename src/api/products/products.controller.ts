@@ -22,17 +22,17 @@ export class ProductsController {
   @Post()
   async create(@Body() createProductDto: CreateProductDto, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.productsService.create(createProductDto, email);
+    return this.productsService.create(createProductDto, userId);
   }
 
   @Get()
   async findAll(@Body() { homeId }: FindAllDto, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.productsService.findAll(homeId, email);
+    return this.productsService.findAll(homeId, userId);
   }
 
   @Get(`:productId`)
@@ -42,9 +42,9 @@ export class ProductsController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.productsService.findOne(homeId, email, productId);
+    return this.productsService.findOne(homeId, userId, productId);
   }
 
   @Patch(`:productId`)
@@ -54,16 +54,16 @@ export class ProductsController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.productsService.update(email, id, updateProductDto);
+    return this.productsService.update(userId, id, updateProductDto);
   }
 
   @Delete(`:productId`)
   remove(@Param('productId', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.productsService.remove(email, id);
+    return this.productsService.remove(userId, id);
   }
 }

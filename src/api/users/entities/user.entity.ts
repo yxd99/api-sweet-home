@@ -33,8 +33,9 @@ export class User {
     type: 'bigint',
     nullable: false,
     select: false,
+    name: 'code_expire_in',
   })
-  code_expire_in: number;
+  codeExpireIn: number;
 
   @OneToMany(() => HouseholdMember, (householdMember) => householdMember.user)
   householdMembers: HouseholdMember[];

@@ -27,27 +27,27 @@ export class PersonalMarketsController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.personalMarketsService.create(createPersonalMarketDto, email);
+    return this.personalMarketsService.create(createPersonalMarketDto, userId);
   }
 
   @Get()
   async findAll(@Body() { homeId }: FindAllDto, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
-    return this.personalMarketsService.findAll(homeId, email);
+    return this.personalMarketsService.findAll(homeId, userId);
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
-    return this.personalMarketsService.findOne(id, email);
+    return this.personalMarketsService.findOne(id, userId);
   }
 
   @Patch(':id')
@@ -57,21 +57,21 @@ export class PersonalMarketsController {
     @Req() request,
   ) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
 
     return this.personalMarketsService.update(
       id,
       updatePersonalMarketDto,
-      email,
+      userId,
     );
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { email },
+      user: { userId },
     } = request;
-    return this.personalMarketsService.remove(id, email);
+    return this.personalMarketsService.remove(id, userId);
   }
 }
