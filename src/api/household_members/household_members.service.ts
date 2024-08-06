@@ -37,6 +37,7 @@ export class HouseholdMembersService {
       home,
       user,
     });
+
     await this.householdMemberRepository.save(newMember);
     return {
       msg: `User ${user.email} added to the home`,

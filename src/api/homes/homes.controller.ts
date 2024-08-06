@@ -21,24 +21,24 @@ export class HomesController {
   @Post()
   async create(@Body() createHomeDto: CreateHomeDto, @Req() request) {
     const {
-      user: { userId },
+      user: { email: userEmail },
     } = request;
 
-    return this.homesService.create(createHomeDto, userId);
+    return this.homesService.create(createHomeDto, userEmail);
   }
 
   @Get()
   findAll(@Req() request) {
     const {
-      user: { userId },
+      user: { email: userEmail },
     } = request;
-    return this.homesService.findAll(userId);
+    return this.homesService.findAll(userEmail);
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) homeId: number, @Req() request) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
 
     return this.homesService.getHouseInfo(homeId, userId);
@@ -51,7 +51,7 @@ export class HomesController {
     @Req() request,
   ) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.homesService.update(id, updateHomeDto, userId);
   }
@@ -59,8 +59,8 @@ export class HomesController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { userId },
+      user: { email: userEmail },
     } = request;
-    return this.homesService.remove(id, userId);
+    return this.homesService.remove(id, userEmail);
   }
 }

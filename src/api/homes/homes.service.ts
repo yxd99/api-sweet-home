@@ -69,7 +69,7 @@ export class HomesService {
     const home = await this.getHouseInfo(homeId, userId);
     await this.homeRepository.update(homeId, updateHomeDto);
     return {
-      msg: `Home ${home.name} has been updated to ${updateHomeDto.name}`,
+      msg: `Home '${home.name}' has been updated to '${updateHomeDto.name}'`,
     };
   }
 
