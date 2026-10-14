@@ -28,34 +28,47 @@
 
 ## Installation
 
+This project uses [pnpm](https://pnpm.io/) as its package manager.
+
 ```bash
-$ npm install
+$ pnpm install
 ```
+
+## Environment
+
+Configuration is read from `.env`. Email delivery goes through
+[Resend](https://resend.com), which requires:
+
+- `RESEND_API_KEY` — API key from the Resend dashboard.
+- `RESEND_MAIL_FROM` — the sender, for example `Sweet Home <no-reply@your-domain.com>`.
+  That domain has to be verified in Resend. `onboarding@resend.dev` is the test
+  sender and only delivers to the address that owns the Resend account.
+
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ pnpm start
 
 # watch mode
-$ npm run start:dev
+$ pnpm start:dev
 
 # production mode
-$ npm run start:prod
+$ pnpm start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ pnpm test
 
 # e2e tests
-$ npm run test:e2e
+$ pnpm test:e2e
 
 # test coverage
-$ npm run test:cov
+$ pnpm test:cov
 ```
 
 ## Support

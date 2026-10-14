@@ -1,0 +1,23 @@
+# pnpm settings for this repository.
+#
+# pnpm 11 reads its settings from this file (the legacy "pnpm" field in
+# package.json is no longer read, and the old `onlyBuiltDependencies` list has
+# been replaced by the `allowBuilds` map).
+#
+# `allowBuilds` is an allow-list: only the packages named here may run their
+# install/postinstall scripts. Every other dependency keeps its scripts blocked.
+allowBuilds:
+  # bcrypt downloads/builds a native binding from its `install` script:
+  #   node-pre-gyp install --fallback-to-build
+  # If that script is blocked, requiring the module throws:
+  #   Cannot find module '.../bcrypt/lib/binding/napi-v3/bcrypt_lib.node'
+  # and every password hash/compare fails at runtime.
+  bcrypt: true
+  # @nestjs/core only runs `opencollective || exit 0` (a donation banner that
+  # already tolerates failure), so its script stays blocked.
+  '@nestjs/core': false
+  # @scarf/scarf (pulled in transitively by swagger-ui-dist) only posts
+  # anonymous install telemetry, so it stays blocked too. Naming it here is not
+  # cosmetic: an unlisted blocked script makes pnpm fail the whole install with
+  # ERR_PNPM_IGNORED_BUILDS.
+  '@scarf/scarf': false
