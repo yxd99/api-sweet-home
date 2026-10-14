@@ -76,7 +76,7 @@ export class PersonalMarketsService {
       const personalMarket = await this.findOne(personalMarketId, userId);
       if (Object.keys(updatePersonalMarketDto).includes('homeId')) {
         const { homeId } = updatePersonalMarketDto;
-        await this.validateHome(homeId, userId);
+        await this.homeService.getHouseInfo(homeId, userId);
         personalMarket.home = await this.homeService.getHouseInfo(
           homeId,
           userId,
@@ -97,16 +97,16 @@ export class PersonalMarketsService {
   }
 
   async validateHome(personalMarketId: number, userId: number) {
-    const home = await this.personalMarketRepository.findOne({
+    const personalMarket = await this.personalMarketRepository.findOne({
       relations: ['home'],
       where: {
         id: personalMarketId,
       },
     });
-    if (!home) {
+    if (!personalMarket) {
       throw new NotFoundException('Personal market not found for the home');
     }
 
-    await this.homeService.getHouseInfo(home.id, userId);
+    await this.homeService.getHouseInfo(personalMarket.home.id, userId);
   }
 }
