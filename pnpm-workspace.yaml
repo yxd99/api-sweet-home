@@ -21,3 +21,11 @@ allowBuilds:
   # cosmetic: an unlisted blocked script makes pnpm fail the whole install with
   # ERR_PNPM_IGNORED_BUILDS.
   '@scarf/scarf': false
+  # Two more transitive dependencies carry install scripts:
+  #   @parcel/watcher → node scripts/build-from-source.js
+  #   unrs-resolver   → node postinstall.js
+  # Both ship their prebuilt binaries as optional dependencies, so building from
+  # source is unnecessary; naming them here is what keeps a *fresh* install from
+  # failing with ERR_PNPM_IGNORED_BUILDS (a no-op install hides the problem).
+  '@parcel/watcher': false
+  unrs-resolver: false
