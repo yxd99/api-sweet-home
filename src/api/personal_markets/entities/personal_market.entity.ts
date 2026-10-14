@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Home } from '@api/homes/entities/home.entity';
+import { SupermarketProduct } from '@api/supermarket-products/entities/supermarket-product.entity';
 
 @Entity('personal_markets')
 export class PersonalMarket {
@@ -24,4 +26,11 @@ export class PersonalMarket {
     name: 'home_id',
   })
   home: Home;
+
+  @OneToMany(
+    () => SupermarketProduct,
+    (supermarketProducts) => supermarketProducts.market,
+    { cascade: true },
+  )
+  products: SupermarketProduct[];
 }

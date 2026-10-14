@@ -8,6 +8,7 @@ import { HomesModule } from '@api/homes/homes.module';
 import { HouseholdMembersModule } from '@api/household_members/household_members.module';
 import { PersonalMarketsModule } from '@api/personal_markets/personal_markets.module';
 import { ProductsModule } from '@api/products/products.module';
+import { SupermarketProductsModule } from '@api/supermarket-products/supermarket-products.module';
 import { UsersModule } from '@api/users/users.module';
 import { typeOrm } from '@common/config';
 import { MailModule } from '@shared/mail/mail.module';
@@ -25,6 +26,7 @@ import { MailModule } from '@shared/mail/mail.module';
     HouseholdMembersModule,
     PersonalMarketsModule,
     ProductsModule,
+    SupermarketProductsModule,
   ],
   controllers: [],
   providers: [Logger],
