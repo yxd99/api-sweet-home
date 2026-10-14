@@ -42,12 +42,21 @@ export class ProductsService {
 
   async findOne(homeId: number, userId: number, id: number) {
     await this.homesService.getHouseInfo(homeId, userId);
-    return this.productRepository.findOne({
+    const product = await this.productRepository.findOne({
       relations: [],
       where: {
         id,
+        home: {
+          id: homeId,
+        },
       },
     });
+
+    if (product === null) {
+      throw new NotFoundException(`Id product ${id} not exist`);
+    }
+
+    return product;
   }
 
   async update(userId: number, id: number, updateProductDto: UpdateProductDto) {
@@ -74,8 +83,20 @@ export class ProductsService {
   }
 
   async remove(userId: number, id: number) {
-    await this.homesService.getHouseInfo(id, userId);
+    const product = await this.productRepository.findOne({
+      relations: ['home'],
+      where: {
+        id,
+      },
+    });
+
+    if (product === null) {
+      throw new NotFoundException(`Id product ${id} not exist`);
+    }
+
+    await this.homesService.getHouseInfo(product.home.id, userId);
     await this.productRepository.delete(id);
+
     return { msg: `Product ${id} has been delete successfully` };
   }
 }

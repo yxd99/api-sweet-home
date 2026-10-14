@@ -22,7 +22,7 @@ export class ProductsController {
   @Post()
   async create(@Body() createProductDto: CreateProductDto, @Req() request) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.productsService.create(createProductDto, userId);
   }
@@ -30,7 +30,7 @@ export class ProductsController {
   @Get()
   async findAll(@Body() { homeId }: FindAllDto, @Req() request) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.productsService.findAll(homeId, userId);
   }
@@ -42,7 +42,7 @@ export class ProductsController {
     @Req() request,
   ) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.productsService.findOne(homeId, userId, productId);
   }
@@ -54,7 +54,7 @@ export class ProductsController {
     @Req() request,
   ) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.productsService.update(userId, id, updateProductDto);
   }
@@ -62,7 +62,7 @@ export class ProductsController {
   @Delete(`:productId`)
   remove(@Param('productId', ParseIntPipe) id: number, @Req() request) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.productsService.remove(userId, id);
   }

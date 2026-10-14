@@ -45,6 +45,8 @@ export class HouseholdMembersService {
   }
 
   async addMemberToHome(homeId: number, userId: number, emailInvited: string) {
+    await this.homeService.getHouseInfo(homeId, userId);
+
     if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited)) {
       throw new BadRequestException(`User ${emailInvited} is a member`);
     }

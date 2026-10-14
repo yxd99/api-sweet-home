@@ -16,7 +16,7 @@ export class HouseholdMembersController {
     @Req() request,
   ) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
 
     return this.householdMembersService.addMemberToHome(
@@ -32,7 +32,7 @@ export class HouseholdMembersController {
     @Body() deleteHouseholdMember: DeleteHouseholdMemberDto,
   ) {
     const {
-      user: { userId },
+      user: { id: userId },
     } = request;
     return this.householdMembersService.deleteMember(
       userId,
