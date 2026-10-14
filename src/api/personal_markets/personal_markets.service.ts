@@ -37,11 +37,7 @@ export class PersonalMarketsService {
   async findAll(homeId: number, userId: number): Promise<PersonalMarket[]> {
     await this.homeService.getHouseInfo(homeId, userId);
     return this.personalMarketRepository.find({
-      relations: [
-        'home',
-        'home.householdMembers',
-        'home.householdMembers.user',
-      ],
+      relations: { home: { householdMembers: { user: true } } },
       where: {
         home: {
           id: homeId,
@@ -61,7 +57,7 @@ export class PersonalMarketsService {
   ): Promise<PersonalMarket> {
     await this.validateHome(personalMarketId, userId);
     return this.personalMarketRepository.findOne({
-      relations: ['home'],
+      relations: { home: true },
       where: { id: personalMarketId },
     });
   }
@@ -98,7 +94,7 @@ export class PersonalMarketsService {
 
   async validateHome(personalMarketId: number, userId: number) {
     const personalMarket = await this.personalMarketRepository.findOne({
-      relations: ['home'],
+      relations: { home: true },
       where: {
         id: personalMarketId,
       },

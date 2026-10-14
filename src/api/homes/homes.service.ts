@@ -51,7 +51,7 @@ export class HomesService {
 
   async findOne(id: number): Promise<Home> {
     const home = await this.homeRepository.findOne({
-      relations: ['householdMembers', `householdMembers.user`],
+      relations: { householdMembers: { user: true } },
       where: {
         id,
       },
@@ -86,7 +86,7 @@ export class HomesService {
 
   async getHouseInfo(homeId: number, userId: number) {
     const home = await this.homeRepository.findOne({
-      relations: ['householdMembers', 'householdMembers.user'],
+      relations: { householdMembers: { user: true } },
       where: {
         id: homeId,
         householdMembers: {

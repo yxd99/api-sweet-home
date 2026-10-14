@@ -61,7 +61,7 @@ export class SupermarketProductsService {
   ): Promise<SupermarketProduct[]> {
     if (marketId === null) {
       return this.supermarketProductRepository.find({
-        relations: ['market'],
+        relations: { market: true },
         where: {
           market: {
             home: {
@@ -77,7 +77,7 @@ export class SupermarketProductsService {
     }
 
     return this.supermarketProductRepository.find({
-      relations: ['market'],
+      relations: { market: true },
       where: {
         market: {
           id: marketId,
@@ -118,7 +118,7 @@ export class SupermarketProductsService {
     updateSupermarketProductDto: UpdateSupermarketProductDto,
   ) {
     const product = await this.supermarketProductRepository.findOne({
-      relations: ['product', 'market'],
+      relations: { product: true, market: true },
       where: {
         id,
         market: {

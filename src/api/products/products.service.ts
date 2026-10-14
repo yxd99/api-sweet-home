@@ -31,7 +31,7 @@ export class ProductsService {
   async findAll(homeId: number, userId: number) {
     await this.homesService.getHouseInfo(homeId, userId);
     return this.productRepository.find({
-      relations: [],
+      relations: {},
       where: {
         home: {
           id: homeId,
@@ -43,7 +43,7 @@ export class ProductsService {
   async findOne(homeId: number, userId: number, id: number) {
     await this.homesService.getHouseInfo(homeId, userId);
     const product = await this.productRepository.findOne({
-      relations: [],
+      relations: {},
       where: {
         id,
         home: {
@@ -61,7 +61,7 @@ export class ProductsService {
 
   async update(userId: number, id: number, updateProductDto: UpdateProductDto) {
     const product = await this.productRepository.findOne({
-      relations: ['home'],
+      relations: { home: true },
       where: {
         id,
       },
@@ -84,7 +84,7 @@ export class ProductsService {
 
   async remove(userId: number, id: number) {
     const product = await this.productRepository.findOne({
-      relations: ['home'],
+      relations: { home: true },
       where: {
         id,
       },

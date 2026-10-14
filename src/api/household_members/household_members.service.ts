@@ -68,8 +68,8 @@ export class HouseholdMembersService {
   }
 
   async verifyIfMemberOfTheHousehold(homeId: number, email: string) {
-    return this.householdMemberRepository.exist({
-      relations: ['home', 'user'],
+    return this.householdMemberRepository.exists({
+      relations: { home: true, user: true },
       where: {
         home: {
           id: homeId,
@@ -86,7 +86,7 @@ export class HouseholdMembersService {
       throw new BadRequestException('The user isnt a member');
     }
     const household = await this.householdMemberRepository.findOne({
-      relations: ['user', 'home'],
+      relations: { user: true, home: true },
       where: {
         home: {
           id: homeId,

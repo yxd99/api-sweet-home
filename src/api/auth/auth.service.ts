@@ -76,7 +76,7 @@ export class AuthService {
 
   async generateRefreshToken(accessToken: string) {
     const tokenData = await this.authRepository.findOne({
-      relations: ['user'],
+      relations: { user: true },
       where: {
         token: accessToken,
         tokenType: TOKEN_TYPE.ACCESS_TOKEN,
