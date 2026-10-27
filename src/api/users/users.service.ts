@@ -49,6 +49,10 @@ export class UsersService {
     };
   }
 
+  async clearCode(email: string) {
+    await this.userRepository.update({ email }, { codeExpireIn: 0 });
+  }
+
   async getCodeAndExpiring(email: string) {
     return this.userRepository
       .createQueryBuilder('users')

@@ -66,7 +66,7 @@ describe('Auth (e2e)', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toEqual({ msg: `code otp sent to email ${EMAIL}` });
-      expect(mail.codeFor(EMAIL)).toMatch(/^\d{4}$/);
+      expect(mail.codeFor(EMAIL)).toMatch(/^\d{6}$/);
     });
 
     it('rejects an invalid email and sends nothing', async () => {
@@ -90,8 +90,8 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/auth/login', () => {
     it('rejects a code that does not match', async () => {
-      const code = await requestCode();
-      const wrongCode = code === '0000' ? '1111' : '0000';
+      await requestCode();
+      const wrongCode = '000000';
 
       const response = await request(http)
         .post('/api/auth/login')

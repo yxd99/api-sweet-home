@@ -1,5 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -20,6 +22,12 @@ import { MailModule } from '@shared/mail/mail.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     TypeOrmModule.forRoot(typeOrm.config()),
     AuthModule,
     UsersModule,
@@ -31,7 +39,11 @@ import { MailModule } from '@shared/mail/mail.module';
     SupermarketProductsModule,
   ],
   controllers: [],
-  providers: [Logger],
+  providers: [
+    Logger,
+    // ThrottlerGuard disabled for now; per-route throttles stay optional
+    // { provide: APP_GUARD, useClass: ThrottlerGuard },
+  ],
 })
 export class AppModule {
   constructor(private readonly dataSource: DataSource) {}

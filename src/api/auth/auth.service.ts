@@ -67,6 +67,10 @@ export class AuthService {
       user,
     });
     const { refreshToken } = await this.generateRefreshToken(tokenGenerated);
+
+    // Single use: invalidate the OTP after a successful login
+    await this.usersService.clearCode(login.email);
+
     return {
       msg: `Welcome ${user.email}`,
       token: tokenGenerated,
@@ -75,6 +79,10 @@ export class AuthService {
   }
 
   async generateRefreshToken(accessToken: string) {
+    if (!accessToken) {
+      throw new BadRequestException('refresh-token header is required');
+    }
+
     const tokenData = await this.authRepository.findOne({
       relations: { user: true },
       where: {
@@ -85,9 +93,7 @@ export class AuthService {
     });
 
     if (!tokenData) {
-      return {
-        msg: 'Token no valid',
-      };
+      throw new UnauthorizedException('Token no valid');
     }
     const user = await this.usersService.findByEmail(tokenData.user.email);
     const payload = {
@@ -107,10 +113,8 @@ export class AuthService {
   async refreshCurrentRefreshToken(refreshToken: string) {
     try {
       await this.jwtService.verify(refreshToken);
-    } catch (error) {
-      return {
-        error,
-      };
+    } catch {
+      throw new UnauthorizedException('Token no valid');
     }
     const tokenData = await this.authRepository.findOneBy({
       token: refreshToken,
@@ -119,9 +123,7 @@ export class AuthService {
     });
 
     if (!tokenData) {
-      return {
-        msg: 'Token no valid',
-      };
+      throw new UnauthorizedException('Token no valid');
     }
     await this.disableToken(tokenData.token);
     const user = await this.usersService.findByEmail(tokenData.user.email);
