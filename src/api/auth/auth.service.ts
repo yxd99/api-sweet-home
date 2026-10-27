@@ -12,7 +12,7 @@ import { UsersService } from '@api/users/users.service';
 import { MailService } from '@shared/mail/mail.service';
 
 import { LoginDto } from './dto/login.dto';
-import { sendOtpCodeDto } from './dto/send-otp.dto';
+import { SendOtpCodeDto } from './dto/send-otp.dto';
 import { Auth, TOKEN_TYPE } from './entities/auth.entity';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async sendCode({ email }: sendOtpCodeDto): Promise<object> {
+  async sendCode({ email }: SendOtpCodeDto): Promise<object> {
     const user = await this.usersService.findByEmail(email);
     if (user === null) {
       await this.usersService.create({
