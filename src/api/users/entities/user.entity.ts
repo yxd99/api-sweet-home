@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 import { HouseholdMember } from '@api/household_members/entities/household_member.entity';
 
@@ -36,6 +36,12 @@ export class User {
     name: 'code_expire_in',
   })
   codeExpireIn: number;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @OneToMany(() => HouseholdMember, (householdMember) => householdMember.user)
   householdMembers: HouseholdMember[];

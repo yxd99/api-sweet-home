@@ -5,6 +5,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { Home } from '@api/homes/entities/home.entity';
@@ -27,10 +29,16 @@ export class PersonalMarket {
   })
   home: Home;
 
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
   @OneToMany(
     () => SupermarketProduct,
     (supermarketProducts) => supermarketProducts.market,
     { cascade: true },
   )
-  products: SupermarketProduct[];
+  supermarketProducts: SupermarketProduct[];
 }
