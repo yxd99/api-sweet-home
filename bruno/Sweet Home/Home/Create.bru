@@ -1,0 +1,30 @@
+meta {
+  name: Create
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{ep}}/homes
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"name": "Monte Azul 2"
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

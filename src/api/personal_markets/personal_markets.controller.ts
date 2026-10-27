@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 
 import { CreatePersonalMarketDto } from './dto/create-personal_market.dto';
@@ -33,12 +34,12 @@ export class PersonalMarketsController {
   }
 
   @Get()
-  async findAll(@Body() { homeId }: FindAllDto, @Req() request) {
+  async findAll(@Query() { homeId }: FindAllDto, @Req() request) {
     const {
       user: { id: userId },
     } = request;
 
-    return this.personalMarketsService.findAll(homeId, userId);
+    return this.personalMarketsService.findAll(Number(homeId), userId);
   }
 
   @Get(':id')

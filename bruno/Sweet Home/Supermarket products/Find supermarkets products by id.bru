@@ -1,0 +1,28 @@
+meta {
+  name: Find supermarkets products by id
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{ep}}/supermarket-products/2
+  body: none
+  auth: bearer
+}
+
+params:query {
+  market_id: 4
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

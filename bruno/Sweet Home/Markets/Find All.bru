@@ -1,0 +1,24 @@
+meta {
+  name: Find All
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{ep}}/personal-markets?home_id=2
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

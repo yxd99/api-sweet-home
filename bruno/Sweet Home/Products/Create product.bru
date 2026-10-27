@@ -1,0 +1,31 @@
+meta {
+  name: Create product
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{ep}}/products
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"home_id": 2,
+  	"name": "Cifrut"
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

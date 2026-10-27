@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -28,11 +29,11 @@ export class ProductsController {
   }
 
   @Get()
-  async findAll(@Body() { homeId }: FindAllDto, @Req() request) {
+  async findAll(@Query() { homeId }: FindAllDto, @Req() request) {
     const {
       user: { id: userId },
     } = request;
-    return this.productsService.findAll(homeId, userId);
+    return this.productsService.findAll(Number(homeId), userId);
   }
 
   @Get(`:productId`)

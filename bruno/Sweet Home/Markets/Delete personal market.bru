@@ -1,0 +1,20 @@
+meta {
+  name: Delete personal market
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{ep}}/personal-markets/2
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

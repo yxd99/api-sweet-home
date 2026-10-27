@@ -1,0 +1,31 @@
+meta {
+  name: Create a new market
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{ep}}/personal-markets
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"name": "d1",
+  	"home_id": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

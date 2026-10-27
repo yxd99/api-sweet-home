@@ -30,22 +30,58 @@ export class HouseholdMembersService {
       createHouseholdMemberDto.userInvited,
     );
 
+    if (user === null) {
+      await this.userService.create({ email: createHouseholdMemberDto.userInvited });
+    }
+
+    const userLoaded = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
     const home = await this.homeService.findOne(
       createHouseholdMemberDto.homeId,
     );
-    const newMember = await this.householdMemberRepository.create({
+    const newMember = this.householdMemberRepository.create({
       home,
-      user,
+      user: userLoaded,
+      isOwner: false,
     });
 
     await this.householdMemberRepository.save(newMember);
     return {
-      msg: `User ${user.email} added to the home`,
+      msg: `User ${userLoaded.email} added to the home`,
+    };
+  }
+
+  async createOwner(createHouseholdMemberDto: CreateHouseholdMemberDto) {
+    const user = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
+
+    if (user === null) {
+      await this.userService.create({ email: createHouseholdMemberDto.userInvited });
+    }
+
+    const userLoaded = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
+    const home = await this.homeService.findOne(
+      createHouseholdMemberDto.homeId,
+    );
+    const newMember = this.householdMemberRepository.create({
+      home,
+      user: userLoaded,
+      isOwner: true,
+    });
+
+    await this.householdMemberRepository.save(newMember);
+    return {
+      msg: `User ${userLoaded.email} added to the home`,
     };
   }
 
   async addMemberToHome(homeId: number, userId: number, emailInvited: string) {
     await this.homeService.getHouseInfo(homeId, userId);
+    await this.homeService.assertOwner(homeId, userId);
 
     if (await this.verifyIfMemberOfTheHousehold(homeId, emailInvited)) {
       throw new BadRequestException(`User ${emailInvited} is a member`);
@@ -104,6 +140,7 @@ export class HouseholdMembersService {
 
   async deleteMember(userId: number, emailGuest: string, homeId: number) {
     await this.homeService.getHouseInfo(homeId, userId);
+    await this.homeService.assertOwner(homeId, userId);
     return this.remove(emailGuest, homeId);
   }
 }

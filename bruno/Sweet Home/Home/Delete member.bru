@@ -1,0 +1,31 @@
+meta {
+  name: Delete member
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{ep}}/homes/3
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"email_guest": "dicro089@gmail.com",
+  	"home_id": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

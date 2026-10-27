@@ -1,30 +1,31 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 
 import { swagger } from '@common/config';
-import { apiInfo } from '@common/constants';
+import { AllExceptionsFilter } from '@common/filters/http-exception.filter';
 
 import { AppModule } from './app.module';
+import { configureApp } from './bootstrap';
 
 const main = async () => {
   const port = process.env.PORT ?? 3000;
-  const prefix = apiInfo.PREFIX;
 
   const app = await NestFactory.create(AppModule, {
-    cors: true,
+    cors: {
+      origin: process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()) || true,
+      credentials: true,
+    },
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
+  app.use(helmet());
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.enableShutdownHooks();
+
+  configureApp(app);
 
   swagger.setup(app);
 
-  app.setGlobalPrefix(prefix);
   await app.listen(port, async () => {
     Logger.log(`App in: ${await app.getUrl()}`);
   });
