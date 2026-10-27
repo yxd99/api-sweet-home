@@ -1,4 +1,5 @@
 import {
+  Column,
   DeleteDateColumn,
   Entity,
   JoinColumn,
@@ -13,6 +14,9 @@ import { User } from '@api/users/entities/user.entity';
 export class HouseholdMember {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ type: 'boolean', default: false })
+  isOwner: boolean;
 
   @ManyToOne(() => Home, (home) => home.id)
   @JoinColumn({

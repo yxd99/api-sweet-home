@@ -30,17 +30,52 @@ export class HouseholdMembersService {
       createHouseholdMemberDto.userInvited,
     );
 
+    if (user === null) {
+      await this.userService.create({ email: createHouseholdMemberDto.userInvited });
+    }
+
+    const userLoaded = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
     const home = await this.homeService.findOne(
       createHouseholdMemberDto.homeId,
     );
-    const newMember = await this.householdMemberRepository.create({
+    const newMember = this.householdMemberRepository.create({
       home,
-      user,
+      user: userLoaded,
+      isOwner: false,
     });
 
     await this.householdMemberRepository.save(newMember);
     return {
-      msg: `User ${user.email} added to the home`,
+      msg: `User ${userLoaded.email} added to the home`,
+    };
+  }
+
+  async createOwner(createHouseholdMemberDto: CreateHouseholdMemberDto) {
+    const user = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
+
+    if (user === null) {
+      await this.userService.create({ email: createHouseholdMemberDto.userInvited });
+    }
+
+    const userLoaded = await this.userService.findByEmail(
+      createHouseholdMemberDto.userInvited,
+    );
+    const home = await this.homeService.findOne(
+      createHouseholdMemberDto.homeId,
+    );
+    const newMember = this.householdMemberRepository.create({
+      home,
+      user: userLoaded,
+      isOwner: true,
+    });
+
+    await this.householdMemberRepository.save(newMember);
+    return {
+      msg: `User ${userLoaded.email} added to the home`,
     };
   }
 
