@@ -1,16 +1,37 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateSupermarketProductDto {
+  @ApiProperty({ example: 'Leche' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ example: 'https://example.com/image.jpg', required: false })
+  @IsString()
   @IsOptional()
-  @IsNumber()
-  @Min(0)
-  cost: number;
+  imageUrl?: string;
 
+  @ApiProperty({ example: 3500 })
   @IsNumber()
-  @Min(0)
-  market_id: number;
+  price: number;
 
+  @ApiProperty({ example: 'Almacén', required: false })
+  @IsString()
+  @IsOptional()
+  market?: string;
+
+  @ApiProperty({ example: 1, required: false })
   @IsNumber()
-  @Min(0)
-  product_id: number;
+  @IsOptional()
+  market_id?: number;
+
+  @ApiProperty({ example: 1, required: false })
+  @IsNumber()
+  @IsOptional()
+  product_id?: number;
+
+  @ApiProperty({ example: 3500, required: false })
+  @IsNumber()
+  @IsOptional()
+  cost?: number;
 }
