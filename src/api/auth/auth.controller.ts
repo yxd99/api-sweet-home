@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 import { DisableTokensHeaders } from './dto/disable-tokens-headers.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenHeaders } from './dto/refresh-token-headers.decorator';
-import { sendOtpCodeDto } from './dto/send-otp.dto';
+import { SendOtpCodeDto } from './dto/send-otp.dto';
 
 @Public()
 @Controller('auth')
@@ -16,7 +16,7 @@ export class AuthController {
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('send-code')
-  async sendOtp(@Body() body: sendOtpCodeDto): Promise<object> {
+  async sendOtp(@Body() body: SendOtpCodeDto): Promise<object> {
     return this.authService.sendCode(body);
   }
 

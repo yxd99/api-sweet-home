@@ -31,7 +31,14 @@ describe('validateEnv', () => {
   });
 
   it('normalizes the legacy `prod` spelling to production', () => {
-    expect(validateEnv({ ...VALID_CONFIG, ENV: 'prod', RESEND_API_KEY: 'k', RESEND_MAIL_FROM: 'f' })).toMatchObject({
+    expect(
+      validateEnv({
+        ...VALID_CONFIG,
+        ENV: 'prod',
+        RESEND_API_KEY: 'k',
+        RESEND_MAIL_FROM: 'f',
+      }),
+    ).toMatchObject({
       ENV: 'production',
     });
   });
@@ -43,9 +50,10 @@ describe('validateEnv', () => {
   });
 
   it('rejects a missing required variable and names it', () => {
-    const { JWT_SECRET: _secret, ...withoutSecret } = VALID_CONFIG;
+    const copy: Record<string, unknown> = { ...VALID_CONFIG };
+    delete copy.JWT_SECRET;
 
-    expect(() => validateEnv({ ...withoutSecret })).toThrow(/JWT_SECRET is required/);
+    expect(() => validateEnv(copy)).toThrow(/JWT_SECRET is required/);
   });
 
   it('rejects an empty required variable', () => {
@@ -55,13 +63,15 @@ describe('validateEnv', () => {
   });
 
   it('rejects a non-numeric port', () => {
-    expect(() => validateEnv({ ...VALID_CONFIG, DB_PORT: 'not-a-port' })).toThrow(
-      /DB_PORT must be a number/,
-    );
+    expect(() =>
+      validateEnv({ ...VALID_CONFIG, DB_PORT: 'not-a-port' }),
+    ).toThrow(/DB_PORT must be a number/);
   });
 
   it('warns instead of failing when the secret is weak outside production', () => {
-    expect(() => validateEnv({ ...VALID_CONFIG, JWT_SECRET: 'short' })).not.toThrow();
+    expect(() =>
+      validateEnv({ ...VALID_CONFIG, JWT_SECRET: 'short' }),
+    ).not.toThrow();
     expect(warn).toHaveBeenCalledWith(
       expect.stringContaining('JWT_SECRET should be at least'),
       'EnvValidation',
@@ -85,6 +95,8 @@ describe('validateEnv', () => {
       /RESEND_API_KEY is required[\s\S]*RESEND_MAIL_FROM is required/,
     );
 
-    expect(() => validateEnv({ ...VALID_CONFIG, ENV: 'development' })).not.toThrow();
+    expect(() =>
+      validateEnv({ ...VALID_CONFIG, ENV: 'development' }),
+    ).not.toThrow();
   });
 });
