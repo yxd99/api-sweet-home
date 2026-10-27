@@ -20,19 +20,21 @@ export class PersonalMarketsService {
     createPersonalMarketDto: CreatePersonalMarketDto,
     userId: number,
   ) {
-    const { name, homeId } = createPersonalMarketDto;
+    const { name, marketName, homeId } = createPersonalMarketDto as any;
+    const marketNameToUse = marketName ?? name;
 
     const home = await this.homeService.getHouseInfo(homeId, userId);
 
     await this.personalMarketRepository.save({
       home,
-      name,
+      name: marketNameToUse,
     });
 
     return {
-      msg: `${name} added to the home ${home.name}`,
+      msg: `${marketNameToUse} added to the home ${home.name}`,
     };
   }
+
 
   async findAll(homeId: number, userId: number): Promise<PersonalMarket[]> {
     await this.homeService.getHouseInfo(homeId, userId);

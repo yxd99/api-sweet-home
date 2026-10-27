@@ -1,25 +1,22 @@
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
+  @ApiProperty({ example: 'Arroz' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ example: 2, required: false })
+  @IsNumber()
+  @IsOptional()
+  quantity?: number;
+
+  @ApiProperty({ example: 1 })
   @IsNumber()
   homeId: number;
 
-  @IsString()
-  @MinLength(2)
-  @MaxLength(100)
-  name: string;
-
-  @IsOptional()
+  @ApiProperty({ example: 1, required: false })
   @IsNumber()
-  @Min(1)
-  @Max(999999)
-  stock: number;
+  @IsOptional()
+  personalMarketId?: number;
 }

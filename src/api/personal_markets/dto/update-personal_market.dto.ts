@@ -1,7 +1,19 @@
-import { PartialType } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { CreatePersonalMarketDto } from './create-personal_market.dto';
+export class UpdatePersonalMarketDto {
+  @ApiPropertyOptional({ example: 'Nuevo nombre' })
+  @IsString()
+  @IsOptional()
+  marketName?: string;
 
-export class UpdatePersonalMarketDto extends PartialType(
-  CreatePersonalMarketDto,
-) {}
+  @ApiPropertyOptional({ example: 'Nuevo nombre' })
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @ApiPropertyOptional({ example: 1 })
+  @IsNumber()
+  @IsOptional()
+  homeId?: number;
+}
