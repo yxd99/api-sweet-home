@@ -1,0 +1,32 @@
+meta {
+  name: Add product to supermarket
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{ep}}/supermarket-products
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"market_id": 4,
+  	"product_id": 1,
+  	"cost": 2000
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Invite user
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{ep}}/homes/invite-user
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"user_invited": "yexid.9901@gmail.com",
+  	"home_id": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

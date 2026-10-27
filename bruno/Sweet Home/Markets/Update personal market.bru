@@ -1,0 +1,30 @@
+meta {
+  name: Update personal market
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{ep}}/personal-markets/2
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"home_id": 4
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

@@ -1,0 +1,30 @@
+meta {
+  name: Update product
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{ep}}/products/1
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  	"home_id": 4
+  }
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

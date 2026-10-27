@@ -1,0 +1,20 @@
+meta {
+  name: Get all my homes
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{ep}}/homes
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}
