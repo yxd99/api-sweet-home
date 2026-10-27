@@ -28,16 +28,25 @@ export class SupermarketProductsService {
     createSupermarketProductDto: CreateSupermarketProductDto,
     userId: number,
   ) {
-    const market = await this.getMarketForUser(
-      createSupermarketProductDto.market_id,
-      userId,
-    );
-    const product = await this.getProductForUser(
-      createSupermarketProductDto.product_id,
-      userId,
-    );
+    const dto = createSupermarketProductDto as any;
+    const marketId =
+      dto.market_id ??
+      dto.personalMarketId ??
+      dto.personalMarket?.id ??
+      dto.market?.id;
+    const productId =
+      dto.product_id ?? dto.productId ?? dto.product?.id;
+
+    const cost = dto.cost ?? dto.price;
+
+    if (marketId === undefined || productId === undefined || cost === undefined) {
+      throw new BadRequestException('productId/personalMarketId/price are required');
+    }
+
+    const market = await this.getMarketForUser(Number(marketId), userId);
+    const product = await this.getProductForUser(Number(productId), userId);
     if (product === null) {
-      return { msg: `${createSupermarketProductDto.product_id} no exist` };
+      return { msg: `${productId} no exist` };
     }
 
     if (await this.validateIfExist(market.id, product.id)) {
@@ -45,7 +54,7 @@ export class SupermarketProductsService {
     }
 
     await this.supermarketProductRepository.save({
-      cost: createSupermarketProductDto.cost,
+      cost: Number(cost),
       market,
       product,
     });
@@ -55,13 +64,14 @@ export class SupermarketProductsService {
     };
   }
 
+
   async findAll(
     userId: number,
     marketId: number,
   ): Promise<SupermarketProduct[]> {
-    if (marketId === null) {
+    if (marketId === null || marketId === undefined) {
       return this.supermarketProductRepository.find({
-        relations: { market: true },
+        relations: { market: true, product: true },
         where: {
           market: {
             home: {
@@ -77,7 +87,7 @@ export class SupermarketProductsService {
     }
 
     return this.supermarketProductRepository.find({
-      relations: { market: true },
+      relations: { market: true, product: true },
       where: {
         market: {
           id: marketId,
@@ -93,14 +103,18 @@ export class SupermarketProductsService {
     });
   }
 
+
   async findOne(userId: number, id: number): Promise<SupermarketProduct> {
-    const product = await this.supermarketProductRepository.findOneBy({
-      id,
-      market: {
-        home: {
-          householdMembers: {
-            user: {
-              id: userId,
+    const product = await this.supermarketProductRepository.findOne({
+      relations: { market: true, product: true },
+      where: {
+        id,
+        market: {
+          home: {
+            householdMembers: {
+              user: {
+                id: userId,
+              },
             },
           },
         },
@@ -112,11 +126,13 @@ export class SupermarketProductsService {
     return product;
   }
 
+
   async update(
     userId: number,
     id: number,
     updateSupermarketProductDto: UpdateSupermarketProductDto,
   ) {
+    const dto = updateSupermarketProductDto as any;
     const product = await this.supermarketProductRepository.findOne({
       relations: { product: true, market: true },
       where: {
@@ -136,24 +152,23 @@ export class SupermarketProductsService {
       throw new NotFoundException('Product not found in any market');
     }
 
-    if (updateSupermarketProductDto?.cost !== undefined) {
-      product.cost = updateSupermarketProductDto.cost;
+    if (dto?.cost !== undefined) {
+      product.cost = Number(dto.cost);
+    } else if (dto?.price !== undefined) {
+      product.cost = Number(dto.price);
     }
 
-    if (updateSupermarketProductDto?.market_id) {
-      product.market = await this.getMarketForUser(
-        updateSupermarketProductDto.market_id,
-        userId,
-      );
+    const marketId =
+      dto?.market_id ?? dto?.personalMarketId ?? dto?.personalMarket?.id ?? dto?.market?.id;
+    if (marketId) {
+      product.market = await this.getMarketForUser(Number(marketId), userId);
     }
 
-    if (updateSupermarketProductDto?.product_id) {
-      const newProduct = await this.getProductForUser(
-        updateSupermarketProductDto.product_id,
-        userId,
-      );
+    const productId = dto?.product_id ?? dto?.productId ?? dto?.product?.id;
+    if (productId) {
+      const newProduct = await this.getProductForUser(Number(productId), userId);
       if (newProduct === null) {
-        return { msg: `${updateSupermarketProductDto.product_id} no exist` };
+        return { msg: `${productId} no exist` };
       }
       product.product = newProduct;
     }
@@ -172,6 +187,7 @@ export class SupermarketProductsService {
 
     return { msg: 'Product has been updated' };
   }
+
 
   async remove(userId: number, id: number) {
     const product = await this.supermarketProductRepository.findOneBy({

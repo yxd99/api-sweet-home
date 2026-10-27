@@ -1,37 +1,76 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+class ProductRefDto {
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  id: number;
+}
+
+class PersonalMarketRefDto {
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  id: number;
+}
 
 export class CreateSupermarketProductDto {
-  @ApiProperty({ example: 'Leche' })
+  @ApiPropertyOptional({ example: 'Leche' })
   @IsString()
-  name: string;
+  @IsOptional()
+  name?: string;
 
-  @ApiProperty({ example: 'https://example.com/image.jpg', required: false })
+  @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
   @IsString()
   @IsOptional()
   imageUrl?: string;
 
-  @ApiProperty({ example: 3500 })
+  @ApiPropertyOptional({ example: 3500 })
   @IsNumber()
-  price: number;
+  @IsOptional()
+  price?: number;
 
-  @ApiProperty({ example: 'Almacén', required: false })
+  @ApiPropertyOptional({ example: 3500 })
+  @IsNumber()
+  @IsOptional()
+  cost?: number;
+
+  @ApiPropertyOptional({ example: 'Almacén' })
   @IsString()
   @IsOptional()
   market?: string;
 
-  @ApiProperty({ example: 1, required: false })
+  @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
   market_id?: number;
 
-  @ApiProperty({ example: 1, required: false })
+  @ApiPropertyOptional({ example: 1 })
+  @IsNumber()
+  @IsOptional()
+  personalMarketId?: number;
+
+  @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
   product_id?: number;
 
-  @ApiProperty({ example: 3500, required: false })
+  @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
-  cost?: number;
+  productId?: number;
+
+  @ApiPropertyOptional({ type: ProductRefDto })
+  @IsObject()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProductRefDto)
+  product?: ProductRefDto;
+
+  @ApiPropertyOptional({ type: PersonalMarketRefDto })
+  @IsObject()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PersonalMarketRefDto)
+  personalMarket?: PersonalMarketRefDto;
 }

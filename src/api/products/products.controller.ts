@@ -9,6 +9,8 @@ import {
   Req,
   ParseIntPipe,
   Query,
+  Headers,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -29,24 +31,39 @@ export class ProductsController {
   }
 
   @Get()
-  async findAll(@Query() { homeId }: FindAllDto, @Req() request) {
+  async findAll(
+    @Query() query: FindAllDto,
+    @Headers('x-home-id') homeIdHeader: string,
+    @Req() request,
+  ) {
     const {
       user: { id: userId },
     } = request;
+    const homeId = query?.homeId ?? homeIdHeader;
+    if (!homeId) {
+      throw new BadRequestException('homeId is required');
+    }
     return this.productsService.findAll(Number(homeId), userId);
   }
 
   @Get(`:productId`)
   findOne(
     @Param('productId', ParseIntPipe) productId: number,
-    @Body() { homeId }: FindAllDto,
+    @Query('homeId') homeIdQuery: string,
+    @Headers('x-home-id') homeIdHeader: string,
+    @Body() body: FindAllDto,
     @Req() request,
   ) {
     const {
       user: { id: userId },
     } = request;
-    return this.productsService.findOne(homeId, userId, productId);
+    const homeId = homeIdQuery ?? body?.homeId ?? homeIdHeader;
+    if (!homeId) {
+      throw new BadRequestException('homeId is required');
+    }
+    return this.productsService.findOne(Number(homeId), userId, productId);
   }
+
 
   @Patch(`:productId`)
   update(
