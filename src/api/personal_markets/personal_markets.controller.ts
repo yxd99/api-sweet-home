@@ -9,6 +9,8 @@ import {
   Req,
   ParseIntPipe,
   Query,
+  Headers,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { CreatePersonalMarketDto } from './dto/create-personal_market.dto';
@@ -34,13 +36,22 @@ export class PersonalMarketsController {
   }
 
   @Get()
-  async findAll(@Query() { homeId }: FindAllDto, @Req() request) {
+  async findAll(
+    @Query() query: FindAllDto,
+    @Headers('x-home-id') homeIdHeader: string,
+    @Req() request,
+  ) {
     const {
       user: { id: userId },
     } = request;
+    const homeId = query?.homeId ?? homeIdHeader;
+    if (!homeId) {
+      throw new BadRequestException('homeId is required');
+    }
 
     return this.personalMarketsService.findAll(Number(homeId), userId);
   }
+
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @Req() request) {

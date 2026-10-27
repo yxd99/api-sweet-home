@@ -1,5 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+class ProductRefDto {
+  @IsNumber()
+  id: number;
+}
+
+class PersonalMarketRefDto {
+  @IsNumber()
+  id: number;
+}
 
 export class UpdateSupermarketProductDto {
   @ApiPropertyOptional({ example: 'Leche entera' })
@@ -17,6 +28,11 @@ export class UpdateSupermarketProductDto {
   @IsOptional()
   price?: number;
 
+  @ApiPropertyOptional({ example: 3600 })
+  @IsNumber()
+  @IsOptional()
+  cost?: number;
+
   @ApiPropertyOptional({ example: 'Supermercado' })
   @IsString()
   @IsOptional()
@@ -30,10 +46,29 @@ export class UpdateSupermarketProductDto {
   @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
-  product_id?: number;
+  personalMarketId?: number;
 
-  @ApiPropertyOptional({ example: 3600 })
+  @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
-  cost?: number;
+  product_id?: number;
+
+  @ApiPropertyOptional({ example: 1 })
+  @IsNumber()
+  @IsOptional()
+  productId?: number;
+
+  @ApiPropertyOptional({ type: ProductRefDto })
+  @IsObject()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProductRefDto)
+  product?: ProductRefDto;
+
+  @ApiPropertyOptional({ type: PersonalMarketRefDto })
+  @IsObject()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PersonalMarketRefDto)
+  personalMarket?: PersonalMarketRefDto;
 }
