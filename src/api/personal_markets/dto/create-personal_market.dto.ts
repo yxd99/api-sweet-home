@@ -1,11 +1,16 @@
-import { IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreatePersonalMarketDto {
+  @ApiProperty({ example: 'Mercado del barrio', name: 'marketName' })
   @IsString()
-  @MaxLength(50)
-  @MinLength(2)
-  name: string;
+  marketName: string;
 
+  @ApiProperty({ example: 1 })
   @IsNumber()
   homeId: number;
+
+  @ApiProperty({ example: 'Mercado del barrio', required: false })
+  @IsString()
+  name?: string;
 }
